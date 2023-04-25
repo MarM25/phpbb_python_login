@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 
 
-def main():
+def login():
     login_page = requests.get(f'{os.getenv("PHPBB_BASEURL")}/ucp.php?mode=login').text
     soup = BeautifulSoup(login_page)
     sid = soup.find('input', {'name': 'redirect'}).attrs['value'].replace('./ucp.php?mode=login&sid=', '')
@@ -23,9 +23,12 @@ def main():
         'login': 'Anmelden',
     }
     time.sleep(1)
-    response = requests.post(f'{os.getenv("PHPBB_BASEURL")}/ucp.php?mode=login', data=data)
+    session = requests.session()
+    session.post(f'{os.getenv("PHPBB_BASEURL")}/ucp.php?mode=login', data=data)
+    return session
 
 
 if __name__ == '__main__':
     load_dotenv()
-    main()
+    session = login()
+    ## Session can be used for multiple calls on Board.
